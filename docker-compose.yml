@@ -1,0 +1,108 @@
+version: '3'
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - mariadb_v:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - backend
+    restart: always
+
+  adminer:
+    container_name: adminer
+    build: ./requirements/bonus/adminer
+    ports:
+      - "9001:9000"
+    depends_on:
+      - mariadb
+    networks:
+      - backend
+    restart: always
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    volumes:
+      - wordpress_v:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    networks:
+      - backend
+    restart: always
+
+  redis:
+    container_name: redis
+    build: ./requirements/bonus/redis
+    volumes:
+      - wordpress_v:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    restart: always
+
+  ftp_server:
+    container_name: ftp_server
+    build: ./requirements/bonus/ftp_server
+    volumes:
+      - wordpress_v:/var/www/html
+    environment:
+      FTP_USR: ${FTP_USER}
+      FTP_PWD: ${FTP_PASS}
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    networks:
+      - backend
+    restart: always
+
+  hugo:
+    container_name: hugo
+    build: ./requirements/bonus/hugo
+    networks:
+      - backend
+    restart: always
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    volumes:
+      - wordpress_v:/var/www/html
+    depends_on:
+      - adminer
+      - redis
+      - hugo
+    ports:
+      - "443:443"
+    networks:
+      - backend
+    restart: always
+
+volumes:
+  mariadb_v:
+    driver: local
+    driver_opts:
+      device: /home/jedurand/data/maria
+      type: none
+      o: bind
+
+  wordpress_v:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/jedurand/data/wordpress
+      o: bind
+
+networks:
+  backend:
+    driver: bridge

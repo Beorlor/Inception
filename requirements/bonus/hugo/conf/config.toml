@@ -1,0 +1,8 @@
+#baseURL = "https://jedurand.42.fr/me"
+theme = "m10c"
+paginate = 8
+canonifyURLs = true
+
+[params]
+  author = "Durand Jean-Baptiste"
+  description = "Inception"
