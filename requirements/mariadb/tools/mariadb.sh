@@ -1,25 +1,29 @@
-#!/bin/sh
+#!/bin/bash
 
-mysql_install_db
-/etc/init.d/mysql start
+# Start MariaDB in the background
+mysqld_safe &
 
-if [ -d "/var/lib/mysql/$MARIA_DATABASE" ]; then
-    echo "Database already exists"
-else
-    mysql_secure_installation << _EOF_
-Y
-$MARIA_ROOT_PASSWORD
-$MARIA_ROOT_PASSWORD
-Y
-n
-Y
-Y
-_EOF_
+# Wait for MariaDB to be ready
+echo "Waiting for MariaDB to be ready..."
+until mysqladmin ping --silent; do
+    sleep 1
+done
+echo "MariaDB is ready."
 
-    echo "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$MARIA_ROOT_PASSWORD'; FLUSH PRIVILEGES;" | mysql -uroot
-    echo "CREATE DATABASE IF NOT EXISTS $MARIA_DATABASE; GRANT ALL ON $MARIA_DATABASE.* TO '$MARIA_USER'@'%' IDENTIFIED BY '$MARIA_PASSWORD'; FLUSH PRIVILEGES;" | mysql -uroot
-    mysql -uroot -p$MARIA_ROOT_PASSWORD $MARIA_DATABASE < /usr/local/bin/wordpress.sql
-fi
+# Create the database if it doesn't exist
+mysql -u root -p"${MARIA_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS \`${MARIA_DATABASE}\`;"
 
-/etc/init.d/mysql stop
-exec "$@"
+# Create the user and grant privileges
+mysql -u root -p"${MARIA_ROOT_PASSWORD}" -e "GRANT ALL ON ${MARIA_DATABASE}.* TO '${MARIA_USER}'@'%' IDENTIFIED BY '${MARIA_PASSWORD}'; FLUSH PRIVILEGES;"
+
+# Change the root password
+mysql -u root -p"${MARIA_ROOT_PASSWORD}" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIA_ROOT_PASSWORD}';"
+
+# Flush privileges
+mysql -u root -p"${MARIA_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
+
+# Stop MariaDB gracefully
+mysqladmin -u root -p"${MARIA_ROOT_PASSWORD}" shutdown
+
+# Start MariaDB in safe mode in the foreground
+exec mysqld_safe
