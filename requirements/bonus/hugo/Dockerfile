@@ -41,5 +41,4 @@ CMD ["hugo", "server", \
      "--bind=0.0.0.0", \
      "--baseURL=https://jedurand.42.fr/me", \
      "-p", "1313", \
-     "--logFile=/dev/stdout", \
      "--appendPort=false"]
