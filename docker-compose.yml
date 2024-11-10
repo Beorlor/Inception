@@ -57,8 +57,8 @@ services:
     volumes:
       - wordpress_v:/var/www/html
     environment:
-      FTP_USR: ${FTP_USER}
-      FTP_PWD: ${FTP_PASS}
+      FTP_USER: ${FTP_USER}
+      FTP_PASS: ${FTP_PASS}
     ports:
       - "21:21"
       - "21100-21110:21100-21110"
