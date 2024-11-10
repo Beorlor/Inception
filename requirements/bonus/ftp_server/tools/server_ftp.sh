@@ -1,5 +1,8 @@
 #!/bin/sh
 
+mkdir -p /var/run/vsftpd/empty
+mkdir -p /etc/vsftpd
+
 # Check if the vsftpd configuration has already been set up
 if [ ! -f "/etc/vsftpd/vsftpd.conf.bak" ]; then
     # Create backup of the default vsftpd configuration
