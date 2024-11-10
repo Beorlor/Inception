@@ -66,12 +66,12 @@ services:
       - backend
     restart: always
 
-  hugo:
-    container_name: hugo
-    build: ./requirements/bonus/hugo
-    networks:
-      - backend
-    restart: always
+  # hugo:
+  #   container_name: hugo
+  #   build: ./requirements/bonus/hugo
+  #   networks:
+  #     - backend
+  #   restart: always
 
   nginx:
     container_name: nginx
@@ -81,7 +81,7 @@ services:
     depends_on:
       - adminer
       - redis
-      - hugo
+      # - hugo
     ports:
       - "443:443"
     networks:
