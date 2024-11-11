@@ -7,3 +7,6 @@ down:
 re:
 	docker-compose down
 	docker-compose up -d --build
+
+cleanv:
+	docker-compose down -v
