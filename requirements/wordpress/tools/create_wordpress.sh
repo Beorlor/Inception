@@ -16,22 +16,25 @@ else
     mv wordpress/* .
     rm -rf latest.tar.gz wordpress
 
-    # Configure WordPress using environment variables
-    sed -i "s/username_here/$MARIA_USER/g" wp-config-sample.php
-    sed -i "s/password_here/$MARIA_PASSWORD/g" wp-config-sample.php
-    sed -i "s/localhost/$MARIA_HOSTNAME/g" wp-config-sample.php
-    sed -i "s/database_name_here/$MARIA_DATABASE/g" wp-config-sample.php
-    cp wp-config-sample.php wp-config.php
+    # Configure WordPress with environment variables
+    wp config create --allow-root \
+        --dbname="$MARIA_DATABASE" \
+        --dbuser="$MARIA_USER" \
+        --dbpass="$MARIA_PASSWORD" \
+        --dbhost="mariadb:3306" \
+        --path='/var/www/html'
 
-    # Install WordPress
-    wp core install \
+    # Install WordPress with admin user configuration
+    wp core install --allow-root \
         --url="$DOMAIN_NAME" \
-        --title="Your Site Title" \
-        --admin_user="$WORDPRESS_ADMIN" \
+        --title="$WP_TITLE" \
+        --admin_user="$WORDPRESS_ADMIN" \  # Ensure this does not contain "admin"
         --admin_password="$WORDPRESS_ADMIN_PASSWORD" \
         --admin_email="$WORDPRESS_ADMIN_EMAIL" \
-        --skip-email \
-        --allow-root
+        --skip-email
+
+    # Create the second WordPress user with editor permissions
+    wp user create "$SECOND_WP_USER" "$SECOND_WP_EMAIL" --role=editor --user_pass="$SECOND_WP_PASSWORD" --allow-root
 
     # Enable Redis caching for WordPress
     wp config set WP_REDIS_HOST redis --allow-root
