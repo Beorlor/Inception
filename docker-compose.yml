@@ -17,10 +17,6 @@ services:
     build: ./requirements/bonus/adminer
     depends_on:
       - mariadb
-    # expose:
-    #   - "9001"
-    ports:
-      - "9001:9001"
     networks:
       - backend
     restart: always
