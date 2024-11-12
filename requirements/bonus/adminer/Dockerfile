@@ -1,4 +1,5 @@
 FROM alpine:3.15.0
+# alpine for php 8.0
 
 # install prerequisites
 # https://wordpress.com/support/php-environment/
