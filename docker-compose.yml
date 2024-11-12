@@ -15,10 +15,12 @@ services:
   adminer:
     container_name: adminer
     build: ./requirements/bonus/adminer
-    ports:
-      - "9001:9000"
     depends_on:
       - mariadb
+    # expose:
+    #   - "9000"
+    ports:
+      - "9001:9000"
     networks:
       - backend
     restart: always

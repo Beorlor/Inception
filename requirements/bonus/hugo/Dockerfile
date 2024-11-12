@@ -31,7 +31,7 @@ RUN hugo new site /var/hugo/me && \
 
 # Copy configuration files into the container
 COPY ./conf/config.toml /var/hugo/me/config.toml
-COPY ./conf/avatar.jpg /var/hugo/me/themes/m10c/static/avatar.jpg
+#COPY ./conf/avatar.jpg /var/hugo/me/themes/m10c/static/avatar.jpg
 
 # Expose the port Hugo will serve on
 EXPOSE 1313

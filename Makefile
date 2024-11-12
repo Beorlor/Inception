@@ -10,3 +10,7 @@ re:
 
 cleanv:
 	docker-compose down -v
+
+n:
+	docker-compose down nginx
+	docker-compose up -d --build nginx
