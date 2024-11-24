@@ -11,6 +11,9 @@ re:
 cleanv:
 	docker-compose down -v
 
-n:
-	docker-compose down nginx
-	docker-compose up -d --build nginx
+hugo:
+	docker-compose down hugo
+	docker-compose up -d --build hugo
+
+fixv:
+	docker-compose down --volumes --remove-orphans
